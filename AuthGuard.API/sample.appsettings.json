@@ -1,0 +1,28 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=MyDatabase;User Id=myUsername;Password=myPassword;Trusted_Connection=True;TrustServerCertificate=True;"
+  },
+  "JwtSettings": {
+    "Key": "dXgqdo36J87jwlPklm1230lm0AjwpRU6K6gNziZvKXq4=",
+    "Issuer": "http://localhost:5000",
+    "Audience": "http://localhost:5000",
+    "ExpiryMinutes": 10
+  },
+  "EmailSettings": {
+    "SmtpServer": "smtp.mailtrap.io",
+    "Port": 587,
+    "SenderEmail": "noreply@example.com",
+    "SenderName": "App Support",
+    "Username": "your_username",
+    "Password": "your_password",
+    "EnableSsl": true
+  }
+}
