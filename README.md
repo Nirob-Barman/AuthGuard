@@ -25,7 +25,8 @@
 1. Clone the repository:
 
    ```bash
-
+   https://github.com/Nirob-Barman/AuthGuard.git
+   cd AuthGuard
    ```
 2. Configure the database connection in **appsettings.json**.
 3. Run database migrations:
@@ -50,7 +51,7 @@ Ensure the **DefaultConnection** string in **appsettings.json** is correctly con
 
 ```json
 "ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Database=CarShopDb;Trusted_Connection=True;MultipleActiveResultSets=true"
+  "DefaultConnection": "Server=localhost;Database=AuthGuard;Trusted_Connection=True;MultipleActiveResultSets=true"
 }
 ```
 
@@ -60,8 +61,8 @@ To enable email features such as registration confirmations, password resets, or
 "EmailSettings": {
   "SmtpServer": "smtp.example.com",
   "Port": 587,
-  "SenderName": "Car Shop",
-  "SenderEmail": "noreply@carshop.com",
+  "SenderName": "AuthGuard",
+  "SenderEmail": "noreply@AuthGuard.com",
   "Username": "your-smtp-username",
   "Password": "your-smtp-password",
   "EnableSsl": true
