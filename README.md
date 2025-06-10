@@ -1,5 +1,7 @@
 ﻿# AuthGuard
 
+A secure, token-based authentication and authorization API built with ASP.NET Core. Includes JWT authentication, email-based user verification, and SQL Server integration.
+
 ---
 
 ## 📝 Project Overview
@@ -9,6 +11,12 @@
 ---
 
 ## ⚙️ Technologies Used
+
+- ASP.NET Core Web API
+- Entity Framework Core
+- SQL Server
+- JWT Authentication
+- SMTP (Gmail/Other)
 
 ---
 
@@ -52,6 +60,19 @@ Ensure the **DefaultConnection** string in **appsettings.json** is correctly con
 ```json
 "ConnectionStrings": {
   "DefaultConnection": "Server=localhost;Database=AuthGuard;Trusted_Connection=True;MultipleActiveResultSets=true"
+}
+```
+
+## 🔐 JWT Settings
+
+These values are used for authentication and token issuance.
+
+```
+"JwtSettings": {
+  "Key": "your-very-secure-key",
+  "Issuer": "http://localhost:5000",
+  "Audience": "http://localhost:5000",
+  "ExpiryMinutes": 60
 }
 ```
 
