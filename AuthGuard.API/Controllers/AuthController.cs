@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using AuthGuard.API.Wrappers;
 using AuthGuard.Application.DTOs.Auth;
-using AuthGuard.Application.Interfaces;
+using AuthGuard.Application.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AuthGuard.API.Controllers
 {
@@ -9,26 +10,27 @@ namespace AuthGuard.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IIdentityService _identityService;
-        public AuthController(IIdentityService identityService)
+        private readonly IAuthService _authService;
+        public AuthController(IAuthService authService)
         {
-            _identityService = identityService;
+            _authService = authService;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            var result = await _identityService.RegisterAsync(request);
-            return StatusCode(result.StatusCode, result);
+            var result = await _authService.RegisterAsync(request);
+            return ApiResponseMapper.FromResult(this, result);
+
         }
 
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var result = await _identityService.LoginAsync(request);
-            return StatusCode(result.StatusCode, result);
+            var result = await _authService.LoginAsync(request);
+            return ApiResponseMapper.FromResult(this, result);
         }
 
         [Authorize]
@@ -36,46 +38,43 @@ namespace AuthGuard.API.Controllers
         [HttpGet("me")]
         public async Task<IActionResult> Me()
         {
-            var result = await _identityService.GetCurrentUserAsync(User);
-            return StatusCode(result.StatusCode, result);
+            var result = await _authService.GetCurrentUserAsync();
+            return ApiResponseMapper.FromResult(this, result);
         }
 
 
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
         {
-            try
-            {
-                var result = await _identityService.RefreshTokenAsync(request);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return Unauthorized(new { message = ex.Message });
-            }
+            var result = await _authService.RefreshTokenAsync(request);
+            return ApiResponseMapper.FromResult(this, result);
         }
 
         [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] LogoutRequest request)
         {
-            var restult = await _identityService.LogoutAsync(request.RefreshToken!);
-            return StatusCode(restult.StatusCode, restult);
+            //var restult = await _authService.LogoutAsync(request.RefreshToken!);
+            var restult = await _authService.LogoutAsync(request);
+            //return StatusCode(restult.StatusCode, restult);
+            return ApiResponseMapper.FromResult(this, restult);
         }
 
 
         [HttpPost("request-password-reset")]
         public async Task<IActionResult> RequestPasswordReset([FromBody] PasswordResetRequest request)
         {
-            var result = await _identityService.RequestPasswordResetAsync(request.Email!);
-            return StatusCode(result.StatusCode, result);
+            var result = await _authService.RequestPasswordResetAsync(request.Email!);
+            //return StatusCode(result.StatusCode, result);
+            return ApiResponseMapper.FromResult(this, result);
         }
 
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
-            var result = await _identityService.ResetPasswordAsync(request);
-            return StatusCode(result.StatusCode, result);
+            var result = await _authService.ResetPasswordAsync(request);
+            //return StatusCode(result.StatusCode, result);
+            return ApiResponseMapper.FromResult(this, result);
         }
     }
 }

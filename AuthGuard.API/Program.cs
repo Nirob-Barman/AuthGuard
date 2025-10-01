@@ -1,3 +1,5 @@
+using AuthGuard.API.Services;
+using AuthGuard.Application.Interfaces;
 using AuthGuard.Infrastructure.DependencyInjection;
 using AuthGuard.Infrastructure.Identity.Seed;
 using AuthGuard.Infrastructure.Middleware;
@@ -10,6 +12,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddSharedService(builder.Configuration);
+builder.Services.AddScoped<IUserContextService, UserContextService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

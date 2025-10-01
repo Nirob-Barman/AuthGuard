@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Security;
@@ -23,6 +24,44 @@ namespace AuthGuard.Infrastructure.Middleware
             try
             {
                 await _next(context);
+
+                // Handle specific status codes if the response has already been set
+
+                //string message = "An unexpected error occurred. Please try again later.";
+                //int statusCode = (int)HttpStatusCode.InternalServerError;
+                //string title = "Oops! Something Went Wrong";
+
+                //// Check if Exception is too many request, 429 status code
+                //if (context.Response.StatusCode == StatusCodes.Status429TooManyRequests)
+                //{
+                //    title = "Too Many Requests";
+                //    message = "You have sent too many requests in a given amount of time.";
+                //    statusCode = (int)StatusCodes.Status429TooManyRequests;
+                //}
+                //if (context.Response.StatusCode == StatusCodes.Status401Unauthorized)
+                //{
+                //    title = "Unauthorized";
+                //    message = "You are not authorized to access this resource.";
+                //    statusCode = StatusCodes.Status401Unauthorized;
+                //}
+
+                ////If Response is forbidden // 403 status code
+                //if (context.Response.StatusCode == StatusCodes.Status403Forbidden)
+                //{
+                //    title = "Forbidden";
+                //    message = "You do not have permission to access this resource.";
+                //    statusCode = StatusCodes.Status403Forbidden;
+                //}
+
+                //var response = new
+                //{
+                //    title,
+                //    statusCode,
+                //    message
+                //};
+
+                //await context.Response.WriteAsJsonAsync(response);
+
             }
             catch (Exception ex)
             {
@@ -90,7 +129,7 @@ namespace AuthGuard.Infrastructure.Middleware
             var response = new
             {
                 //StatusCode = context.Response.StatusCode,
-                StatusCode = statusCode,
+                statusCode,
                 Message = "An unexpected error occurred.",
                 Details = exception.Message // Optional: hide in production
             };

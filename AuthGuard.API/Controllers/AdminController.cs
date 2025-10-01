@@ -1,47 +1,52 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using AuthGuard.API.Wrappers;
 using AuthGuard.Application.DTOs.Admin;
-using AuthGuard.Application.Interfaces;
+using AuthGuard.Application.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AuthGuard.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     [Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
-        private readonly IIdentityService _identityService;
-
-        public AdminController(IIdentityService identityService)
+        private readonly IAuthService _authService;
+        public AdminController(IAuthService authService)
         {
-            _identityService = identityService;
+            _authService = authService;
         }
 
         [HttpPost("create-role")]
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleRequest request)
         {
-            var result = await _identityService.CreateRoleAsync(request);
-            return StatusCode(result.StatusCode, result);
+            var result = await _authService.CreateRoleAsync(request);
+            //return StatusCode(result.StatusCode, result);
+            return ApiResponseMapper.FromResult(this, result);
         }
 
         [HttpPost("delete-role")]
         public async Task<IActionResult> DeleteRole([FromBody] DeleteRoleRequest request)
         {
-            var result = await _identityService.DeleteRoleAsync(request);
-            return StatusCode(result.StatusCode, result);
+            var result = await _authService.DeleteRoleAsync(request);
+            //return StatusCode(result.StatusCode, result);
+            return ApiResponseMapper.FromResult(this, result);
         }
 
         [HttpPost("assign-role")]
         public async Task<IActionResult> AssignRole([FromBody] AssignRoleRequest request)
         {
-            var result = await _identityService.AssignRoleAsync(request);
-            return StatusCode(result.StatusCode, result);
+            var result = await _authService.AssignRoleAsync(request);
+            //return StatusCode(result.StatusCode, result);
+            return ApiResponseMapper.FromResult(this, result);
         }
         [HttpPost("remove-role")]
         public async Task<IActionResult> RemoveRole([FromBody] RemoveRoleRequest request)
         {
-            var result = await _identityService.RemoveRoleAsync(request);
-            return StatusCode(result.StatusCode, result);
+            var result = await _authService.RemoveRoleAsync(request);
+            //return StatusCode(result.StatusCode, result);
+            return ApiResponseMapper.FromResult(this, result);
         }
     }
 }

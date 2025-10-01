@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 using AuthGuard.Application.Interfaces.Persistence;
 
 namespace AuthGuard.Infrastructure.Persistence.Repositories

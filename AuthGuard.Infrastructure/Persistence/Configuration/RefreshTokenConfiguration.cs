@@ -13,7 +13,6 @@ namespace AuthGuard.Infrastructure.Persistence.Configuration
             builder.Property(rt => rt.UserId).IsRequired();
             builder.Property(rt => rt.ExpiresAt).IsRequired();
             builder.Property(rt => rt.IsRevoked).HasDefaultValue(false);
-            builder.Property(rt => rt.IsUsed).HasDefaultValue(false);
             builder.Property(rt => rt.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
         }
     }

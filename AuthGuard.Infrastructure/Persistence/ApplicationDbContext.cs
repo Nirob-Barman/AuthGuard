@@ -1,12 +1,11 @@
-﻿
+﻿using AuthGuard.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using AuthGuard.Domain.Entities;
-using AuthGuard.Infrastructure.Identity.Entity;
 
 namespace AuthGuard.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
         public DbSet<RefreshToken> RefreshTokens { get; set; }

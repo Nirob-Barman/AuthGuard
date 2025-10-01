@@ -1,7 +1,5 @@
-﻿
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using AuthGuard.Infrastructure.Identity.Entity;
 
 namespace AuthGuard.Infrastructure.Identity.Seed
 {
@@ -10,7 +8,7 @@ namespace AuthGuard.Infrastructure.Identity.Seed
         public static async Task SeedDefaultRolesAndAdminAsync(IServiceProvider serviceProvider)
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
             string[] roles = new[] { "Admin", "Seller", "Customer" };
 
@@ -28,11 +26,9 @@ namespace AuthGuard.Infrastructure.Identity.Seed
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
             if (adminUser == null)
             {
-                var user = new ApplicationUser
+                var user = new IdentityUser
                 {
-                    UserName = adminEmail,
                     Email = adminEmail,
-                    FullName = "Admin"
                 };
 
                 var result = await userManager.CreateAsync(user, "Admin@123");

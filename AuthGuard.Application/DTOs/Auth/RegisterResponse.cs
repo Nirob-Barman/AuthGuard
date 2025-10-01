@@ -1,17 +1,9 @@
-﻿
-namespace AuthGuard.Application.DTOs.Auth
+﻿namespace AuthGuard.Application.DTOs.Auth
 {
     public class RegisterResponse
-    {
-        public string? Email { get; set; }
-        public string? FullName { get; set; }
+    {        
+        public string Id { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
         public string? Role { get; set; }
-
-        public RegisterResponse(string email, string fullName, string role)
-        {
-            Email = email;
-            FullName = fullName;
-            Role = role;
-        }
     }
 }
