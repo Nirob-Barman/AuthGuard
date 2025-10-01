@@ -60,7 +60,6 @@ namespace AuthGuard.Infrastructure.Middleware
                 //    message
                 //};
 
-                //await context.Response.WriteAsJsonAsync(response);
 
             }
             catch (Exception ex)
@@ -131,8 +130,12 @@ namespace AuthGuard.Infrastructure.Middleware
                 //StatusCode = context.Response.StatusCode,
                 statusCode,
                 Message = "An unexpected error occurred.",
-                Details = exception.Message // Optional: hide in production
+                success = false,
+                data = (object)null!,
+                errors = exception.Message // Optional: hide in production                
             };
+
+
 
             return context.Response.WriteAsJsonAsync(response);
         }
