@@ -35,18 +35,12 @@ namespace AuthGuard.Infrastructure.DependencyInjection
             .AddSignInManager()
             .AddDefaultTokenProviders();
 
-            //services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
-            services.AddScoped<IAuthService, AuthService>();
-            //services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IUserManager, IdentityUserManager>();
             services.AddScoped<IRoleManager, RoleManager>();
             services.AddScoped<ISignInManager, IdentitySignInManager>();
-
-            //services.AddScoped<ILoginAuditRepository, LoginAuditRepository>();
-            //services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-
+            
             services.Configure<EmailSettings>(config.GetSection("EmailSettings"));
             services.AddScoped<IEmailService, EmailService>();
 
