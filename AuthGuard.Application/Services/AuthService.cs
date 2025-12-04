@@ -88,21 +88,22 @@ namespace AuthGuard.Application.Services
             }
 
 
-            var createdUser = await _userManager.FindByIdAsync(userId!);
-            if (createdUser == null)
-            {
-                await _unitOfWork.RollbackAsync();
-                return Result<RegisterResponse>.Fail("User creation failed: unable to fetch user after creation.", "Registration failed", ResultType.Failure);
-            }                
+            //var createdUser = await _userManager.FindByIdAsync(userId!);
+            //if (createdUser == null)
+            //{
+            //    await _unitOfWork.RollbackAsync();
+            //    return Result<RegisterResponse>.Fail("User creation failed: unable to fetch user after creation.", "Registration failed", ResultType.Failure);
+            //}                
 
 
             if (!string.IsNullOrWhiteSpace(request.Role))
             {
-                var (roleAssignSuccess, roleErrors) = await _userManager.AddToRoleAsync(createdUser, request.Role!);
+                var (roleAssignSuccess, roleErrors) = await _userManager.AddToRoleAsync(user, request.Role!);
+                //var (roleAssignSuccess, roleErrors) = await _userManager.AddToRoleAsync(createdUser, request.Role!);
                 if (!roleAssignSuccess)
                 {
                     await _unitOfWork.RollbackAsync();
-                    return Result<RegisterResponse>.Fail($"User created but role assignment failed: {string.Join(", ", roleErrors)}", "Role assignment failed", ResultType.Failure);
+                    return Result<RegisterResponse>.Fail($"Role assignment failed: {string.Join(", ", roleErrors)}", "Role assignment failed", ResultType.Failure);
                 }
             }
 
@@ -421,15 +422,15 @@ namespace AuthGuard.Application.Services
             if (request == null || validationErrors.Any())
                 return Result<RoleRemovalResponse>.Fail(validationErrors, "Validation failed", ResultType.ValidationError);
 
-            var user = await _userManager.FindByIdAsync(request.UserId);
+            var user = await _userManager.FindByIdAsync(request.UserId!);
             if (user == null)
                 return Result<RoleRemovalResponse>.Fail("User not found.", "Remove role failed", ResultType.NotFound);
 
-            var roleExists = await _roleManager.RoleExistsAsync(request.RoleName);
+            var roleExists = await _roleManager.RoleExistsAsync(request.RoleName!);
             if (!roleExists)
                 return Result<RoleRemovalResponse>.Fail("Role does not exist.", "Remove role failed", ResultType.NotFound);
 
-            var result = await _userManager.RemoveFromRoleAsync(user, request.RoleName);
+            var result = await _userManager.RemoveFromRoleAsync(user, request.RoleName!);
             if (!result.Succeeded)
                 return Result<RoleRemovalResponse>.Fail($"Role removal failed: {string.Join(", ", result.Errors)}", "Remove role failed", ResultType.ValidationError);
 

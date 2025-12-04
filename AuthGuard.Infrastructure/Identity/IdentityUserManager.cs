@@ -97,7 +97,8 @@ namespace AuthGuard.Infrastructure.Identity
 
         public async Task<(bool Succeeded, List<string> Errors)> AddToRoleAsync(ApplicationUser user, string roleName)
         {
-            var identityUser = await _userManager.FindByIdAsync(user.Id!);
+            //var identityUser = await _userManager.FindByIdAsync(user.Id!);
+            var identityUser = await _userManager.FindByEmailAsync(user.Email!);
             if (identityUser == null)
                 return (false, new List<string> { "User not found." });
 
