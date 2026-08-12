@@ -1,7 +1,6 @@
 ﻿using AuthGuard.Application.Interfaces;
 using AuthGuard.Application.Interfaces.Email;
 using AuthGuard.Application.Interfaces.Persistence;
-using AuthGuard.Application.Services;
 using AuthGuard.Application.Settings;
 using AuthGuard.Application.Settings.Email;
 using AuthGuard.Infrastructure.Identity;
