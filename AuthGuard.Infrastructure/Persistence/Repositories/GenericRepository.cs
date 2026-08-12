@@ -33,6 +33,15 @@ namespace AuthGuard.Infrastructure.Persistence.Repositories
             return await _dbSet.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
+        public async Task<IEnumerable<T>> GetPagedAsync<TKey>(int pageNumber, int pageSize, Expression<Func<T, TKey>> orderBy, bool descending = false)
+        {
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var ordered = descending ? _dbSet.OrderByDescending(orderBy) : _dbSet.OrderBy(orderBy);
+            return await ordered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
+
         public async Task<int> CountAsync()
         {
             return await _dbSet.CountAsync();
