@@ -38,11 +38,7 @@ namespace AuthGuard.Infrastructure.Identity
             var identityUser = await _userManager.FindByEmailAsync(email);
             if (identityUser == null) return null;
 
-            return new ApplicationUser
-            {
-                Id = identityUser.Id,
-                Email = identityUser.Email!,
-            };
+            return ApplicationUser.Existing(identityUser.Id, identityUser.Email);
         }
 
         public async Task<ApplicationUser?> FindByIdAsync(string id)
@@ -50,11 +46,7 @@ namespace AuthGuard.Infrastructure.Identity
             var identityUser = await _userManager.FindByIdAsync(id.ToString());
             if (identityUser == null) return null;
 
-            return new ApplicationUser
-            {
-                Id = identityUser.Id,
-                Email = identityUser.Email!,
-            };
+            return ApplicationUser.Existing(identityUser.Id, identityUser.Email);
         }
 
         public async Task<string[]> GetRolesAsync(ApplicationUser user)

@@ -72,11 +72,7 @@ namespace AuthGuard.Application.Services
             if (existingUser != null)
                 return Result<RegisterResponse>.Fail("A user with this email already exists.", "Registration failed", ResultType.Conflict);
 
-            var user = new ApplicationUser
-            {
-                Id = string.Empty,
-                Email = request.Email,
-            };
+            var user = ApplicationUser.Create(request.Email);
 
             await _unitOfWork.BeginTransaction();
 
@@ -131,25 +127,17 @@ namespace AuthGuard.Application.Services
 
             var user = await _userManager.FindByEmailAsync(request.Email!);
 
-            var loginAudit = new LoginAudit
-            {
-                UserId = user?.Id,
-                LoginTime = DateTime.UtcNow,
-                Succeeded = false, // Will be updated after password check
-                IpAddress = _userContextService.IpAddress,
-                UserAgent = _userContextService.UserAgent,
-            };
-
             if (user == null)
             {
-                await _loginAuditRepository.AddAsync(loginAudit);
+                var missingUserAudit = LoginAudit.Record(null, _userContextService.IpAddress, _userContextService.UserAgent, false);
+                await _loginAuditRepository.AddAsync(missingUserAudit);
                 await _unitOfWork.CommitAsync();
                 return Result<AuthResponse>.Fail("Invalid username", "Invalid username", ResultType.Unauthorized);
             }
 
             var passwordValid = await _signInManager.CheckPasswordSignInAsync(user, request.Password!);
 
-            loginAudit.Succeeded = passwordValid;
+            var loginAudit = LoginAudit.Record(user.Id, _userContextService.IpAddress, _userContextService.UserAgent, passwordValid);
             await _loginAuditRepository.AddAsync(loginAudit);
 
             if (!passwordValid)
@@ -159,13 +147,7 @@ namespace AuthGuard.Application.Services
             }
 
             var refreshToken = _jwtTokenGenerator.GenerateRefreshToken();
-            var refreshEntity = new RefreshToken
-            {
-                Token = refreshToken,
-                UserId = user?.Id,
-                ExpiresAt = DateTime.UtcNow.AddDays(30),
-                IsRevoked = false
-            };
+            var refreshEntity = RefreshToken.Issue(user.Id, refreshToken, DateTime.UtcNow.AddDays(30));
             await _refreshTokenRepository.AddAsync(refreshEntity);
 
             var (jwtToken, expiresAt) = await _jwtTokenGenerator.GenerateTokenAsync(user!);
@@ -234,19 +216,13 @@ namespace AuthGuard.Application.Services
                 if (tokenEntity.ExpiresAt < DateTime.UtcNow)
                     return Result<AuthResponse>.Fail("Refresh token expired", "Refresh token not found", ResultType.Unauthorized);
 
-                tokenEntity.IsRevoked = true;
+                tokenEntity.Revoke();
                 _refreshTokenRepository.Update(tokenEntity);
 
                 var newRefreshToken = _jwtTokenGenerator.GenerateRefreshToken();
-                var newRefreshEntity = new RefreshToken
-                {
-                    UserId = tokenEntity.UserId,
-                    Token = newRefreshToken,
-                    ExpiresAt = DateTime.UtcNow.AddDays(30),
-                    IsRevoked = false
-                };
+                var newRefreshEntity = RefreshToken.Issue(tokenEntity.UserId, newRefreshToken, DateTime.UtcNow.AddDays(30));
 
-                await _refreshTokenRepository.AddAsync(newRefreshEntity);                
+                await _refreshTokenRepository.AddAsync(newRefreshEntity);
 
                 var user = await _userManager.FindByIdAsync(tokenEntity.UserId!);
                 if (user == null) return Result<AuthResponse>.Fail("User not found", "Refresh token not found", ResultType.NotFound);
@@ -281,10 +257,10 @@ namespace AuthGuard.Application.Services
 
             var tokenEntity = await _refreshTokenRepository.FirstOrDefaultAsync(rt => rt.Token == request.RefreshToken);
 
-            if (tokenEntity == null || tokenEntity.IsRevoked || tokenEntity.ExpiresAt < DateTime.UtcNow)
+            if (tokenEntity == null || !tokenEntity.IsActive)
                 return Result<string>.Fail("Invalid refresh token.", "Invalid refresh token", ResultType.Unauthorized);
 
-            tokenEntity.IsRevoked = true;
+            tokenEntity.Revoke();
             _refreshTokenRepository.Update(tokenEntity);
 
             await _unitOfWork.CommitAsync();
