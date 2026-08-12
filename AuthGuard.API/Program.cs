@@ -14,6 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddSharedService(builder.Configuration);
 builder.Services.AddApplicationServices();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContextService, UserContextService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
